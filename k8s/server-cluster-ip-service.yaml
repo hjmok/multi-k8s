@@ -1,0 +1,17 @@
+#https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11514728#questions
+#so we make one config file per object we want to create. Objects serve various purposes, such as running a container, monitoring a container, setting up a network, etc. This purpose/object type is first determined by the "kind:" parameter
+apiVersion: v1 #Each apiVersion defines a different set of object types that we can create within the configuration file. So selecting v1 opens up access to a predefined set of different object types, including Pod and Service
+kind: Service #kind is the object type
+#Service sets up networking in a Kubernetes cluster
+#There are 4 service subtypes: NodePort, ClusterIP, LoadBalancer, Ingress
+
+metadata:
+  name: server-cluster-ip-service
+spec:
+  type: ClusterIP #The ClusterIP provides a load-balanced IP address. This service is created inside a cluster and can only be accessed by other pods in that cluster. So basically we use this type of service when we want to expose a service to other pods within the same cluster.
+  selector: #selector tells the service which set of pods it can provide communication to
+    component: server #so this service, ClusterIP, is connected to our pods by Label:Component:server in the server-deployment.yaml file.
+    #The selector name is arbitrary as well, it did not need to be component:server as the key value pair. Any key and value could've been used so long as they match in both files
+  ports: #array of ports that need to be mapped to the target object
+    - port: 5000 #this is the port that other pods could use to get access to our main multi-server pods (3 of them) created in server-deployment.yaml
+      targetPort: 5000 #targetPort is the port within our pod that we want to route our input and output traffic to from the web. So in our server-deployment.yaml file, we have our containerPort set to 5000 just like this targetPort

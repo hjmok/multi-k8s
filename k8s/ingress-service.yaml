@@ -1,0 +1,30 @@
+#https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11582352#questions
+#so we make one config file per object we want to create. Objects serve various purposes, such as running a container, monitoring a container, setting up a network, etc. This purpose/object type is first determined by the "kind:" parameter
+apiVersion: networking.k8s.io/v1
+kind: Ingress #kind is the object type
+
+metadata:
+  name: ingress-service
+  annotations: #annotations specify additional higher level configuration around the Ingress object that gets created
+    kubernetes.io/ingress.class: "nginx" #this annotation rule tells Kubernetes that we want to create an Ingress controller based on NGINX
+    nginx.ingress.kubernetes.io/use-regex: "true" #this annotation is used to address certain 404 errors on localhost and Google Cloud
+    nginx.ingress.kubernetes.ui/rewrite-target: /$1 #this annotation configures how the actual copy of NGINX behaves. Particularly, if we end up matching a route like /api, after deciding to send it to the server, the configuration will do a rewrite on the request by removing the /api part
+
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /?(.*) #the client has a request path of /. So if we ever come across a path with prefix of /, then send them to the multi-client pods
+            pathType: Prefix #specifying that the path above is the prefix for client request paths
+            backend:
+              service:
+                name: client-cluster-ip-service #Ingress has to connect to client and cluster, so here we specify our service made in client-cluster-ip-service.yaml
+                port:
+                  number: 3000 #port specified in client-cluster-ip-service.yaml so other pods can access our main multi-client pods
+          - path: /api/?(.*) #the server has a request path of /api. So if we ever come across a path with prefix of /api/, then send them to the multi-server pods
+            pathType: Prefix #specifying that the path above is the prefix for server request paths
+            backend:
+              service:
+                name: server-cluster-ip-service #Ingress has to connect to client and cluster, so here we specify our service made in server-cluster-ip-service.yaml
+                port:
+                  number: 5000 #port specified in server-cluster-ip-service.yaml so other pods can access our main multi-server pods

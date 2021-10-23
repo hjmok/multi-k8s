@@ -1,0 +1,22 @@
+#https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11582310#questions
+#so we make one config file per object we want to create. Objects serve various purposes, such as running a container, monitoring a container, setting up a network, etc. This purpose/object type is first determined by the "kind:" parameter
+apiVersion: v1 #Each apiVersion defines a different set of object types that we can create within the configuration file. So selecting v1 opens up access to a predefined set of different object types, including PersistentVolumeClaim
+kind: PersistentVolumeClaim #kind is the object type
+#so a Volume Claim is the storage configuration attached a pod config, such as 500 gB. Kubernetes will need to find an instance of storage to meet this claim requirement
+#PersistentVolumeClaim advertises the different configuration options for the pods within a cluster
+#i.e. We can choose between 500 gB vs 1 TB storage, then Kubuernetes will meet the requirements of the claim depending on if the 500 gB or 1 TB options are available. If 500 gB is readily available, then it's a Statically Provisioned Persistent Volume. If the 1 TB option is not readily available, then it's a Dynamically Provisioned Persistent Volume
+
+metadata:
+  name: database-persistent-volume-claim #name of the PersistentVolumeClaim that gets created
+
+spec:
+  accessModes:
+    - ReadWriteOnce #Can be read and written to by a single node
+    #The other two access modes are ReadOnlyMany (multiple nodes can read from this) and ReadWriteMany (can be read and written to by many nodes)
+  resources:
+    requests:
+      storage: 1Gi #Kubernetes MUST find an instance with 1 gB of space
+  #StorageClassName is an important parameter we are leaving to default which is our hard drive. If moving to the cloud, we'd need to specify this parameter since there are many storage class options.
+  #To see our default, run "kubectl get storageclass" and "kubectl describe storageclass"
+  #https://kubernetes.io/docs/concepts/storage/storage-classes/
+  #https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11582314#questions

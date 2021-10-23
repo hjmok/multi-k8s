@@ -1,0 +1,34 @@
+#https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11514734#questions
+#so we make one config file per object we want to create. Objects serve various purposes, such as running a container, monitoring a container, setting up a network, etc. This purpose/object type is first determined by the "kind:" parameter
+apiVersion: apps/v1 #Each apiVersion defines a different set of object types that we can create within the configuration file. So selecting apps/v1 opens up access to a predefined set of different object types, including Deployment
+kind: Deployment #kind is the object type
+#so a Deployment is like a Pod, but better for production environments. Whereas pods run a single set of containers, Deployment runs a set of identical pods and monitors the state of each pod, updating as necessary
+
+metadata:
+  name: worker-deployment #name of the Deployment that got created
+
+spec:
+  replicas: 1 #number of different pods that this Deployment will make using the template below
+  selector:
+    matchLabels:
+      component: worker #so after the Deployment creates its pods, the Deployment needs to be able to get a handle on the newly created pods. To do this, the Deployment looks for objects with a key-value pair label of component: worker, which is specified in the template below
+
+  template:
+    #template lists out the configuration that is going to be used for every single pod made within this Deployment
+    #below is the same configuration set up we used in client-pod.yaml
+    metadata:
+      labels:
+        component: worker #so this Pod is connected to our Service (clusterIP) by Selector:Component:worker
+    #The label name is arbitrary as well, it did not need to be component:worker as the key value pair. Any key and value could've been used so long as they match in both files
+    spec:
+      containers:
+        - name: worker
+          image: hjmok/multi-worker
+          #multiworker does not need to have a containerPort or service assigned to it since we don't have any cluster needing access to it. multi-worker only needs to send out data, not receive.
+          env: #environment variables
+            #So the multi-worker needs to connect to redis, so we're setting up it's environment variables
+            #https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11582324#notes
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service #Use this value, specified in redis-cluster-ip-service.yaml, to connect to Redis Host
+            - name: REDIS_PORT
+              value: "6379" #Use this value, specified in redis-cluster-ip-service.yaml, to connect to Redis Port
