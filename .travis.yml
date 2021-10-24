@@ -26,7 +26,7 @@ before_install:
   - gcloud auth activate-service-account --key-file service-account.json #in order to give Google Cloud SDK access to our account, we have to activate a service account and provide a set of credentials inside of a file called service-account.json.
   - gcloud config set project multi-k8s-329921 #telling Google Cloud to select the multi-k8s project ID. https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11628230#questions
   - gcloud config set compute/zone us-central1-c #setting the location to where this cluster is set.
-  - gcloud container clusters get-credentials cluster multi-cluster #telling Google Cloud to use the multi-cluster cluster made in the Kubernetes engine
+  - gcloud container clusters get-credentials multi-cluster #telling Google Cloud to use the multi-cluster cluster made in the Kubernetes engine
   #Third Step is to log into Docker CLI
   #https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11628232#questions
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin ##Log in to the Docker CLI
