@@ -19,7 +19,7 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d #this takes the encrypted file that is stored on Travis CI's servers and unencrypt it. https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/11628228#questions
   #First Step is for Google Cloud to be set up locally on our machine
   - curl https://sdk.cloud.google.com | bash > /dev/null; #here we're downloading Google Cloud SDK using this command. After the pipe |, it saves it locally do that directory.  https://ss64.com/bash/curl.html
-  - source $HOME/google-cloud-sdk/path.bash.inc. #this looks at the default install directory of Google Cloud SDK and sources the file path.bash.inc. This means that there are some configurations inside this file that are going to modify our shell inside of Travic C.I., and it is applied by the source command. https://ss64.com/bash/source.html
+  - source $HOME/google-cloud-sdk/path.bash.inc #this looks at the default install directory of Google Cloud SDK and sources the file path.bash.inc. This means that there are some configurations inside this file that are going to modify our shell inside of Travic C.I., and it is applied by the source command. https://ss64.com/bash/source.html
   - gcloud component update kubectl #this updates and installs kubectl inside of the Travic CI environment
   #Second Step is to configure the SDK without Google Cloud authorization info
   #https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/25408376#questions
